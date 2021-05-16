@@ -1,0 +1,5 @@
+Resultats: 
+Amb HSV - 0.586
+Sense HSV - 0.47
+Amb Gray+HSV - 0.67669
+Gray+Invertit- 0.6917- Només amb les que tenen screenshots 0.85
