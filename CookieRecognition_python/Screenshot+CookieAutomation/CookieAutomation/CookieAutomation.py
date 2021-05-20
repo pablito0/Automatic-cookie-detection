@@ -34,11 +34,12 @@ def FindAndClick(d, img):
                 (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
                 pyautogui.click(x+w/2, y+h/2)
 
-                time.sleep(2)
+                time.sleep(0.7)
                 myScreenshot = pyautogui.screenshot()
-                ImagePath = screenshotsPath + '1.png'
+                ImagePath = screenshotsPath + 'Temp.png'
                 myScreenshot.save(ImagePath)
                 imgPost = cv2.imread(ImagePath)
+                os.remove(ImagePath)
                 if compareImages(imgPost, img, x, y, x+w, y+h) > 0.5:
                     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
                     return True
@@ -61,9 +62,10 @@ if __name__ == "__main__":
         webbrowser.get('firefox').open(line, new=1)
         time.sleep(2)
         myScreenshot = pyautogui.screenshot()
-        ImagePath = screenshotsPath + '0.png'
+        ImagePath = screenshotsPath + 'Temp.png'
         myScreenshot.save(ImagePath)
         img = cv2.imread(ImagePath)
+        os.remove(ImagePath)
 
         d = pytesseract.image_to_data(img, lang='spa+eng', output_type=Output.DICT)
         found = FindAndClick(d, img)
@@ -91,7 +93,10 @@ if __name__ == "__main__":
                 d = pytesseract.image_to_data(val, lang='spa+eng', output_type=Output.DICT)
                 found = FindAndClick(d,img)
         if found: 
-            cv2.imwrite('./Prova-2/{0}-Found.png'.iterator, img)
+            cv2.imwrite(screenshotsPath + '{0}-Found.png'.format(iterator), img)
         else:
-            cv2.imwrite('./Prova-2/{0}-Error.png'.iterator, img)
-        iterator++
+            cv2.imwrite(screenshotsPath + '{0}-Error.png'.format(iterator), img)
+        iterator+=1
+
+        ## This kills all firefox processes when a site has been visited
+        os.system("taskkill /im firefox.exe /f")
