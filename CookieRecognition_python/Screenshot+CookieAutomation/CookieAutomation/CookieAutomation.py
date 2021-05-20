@@ -22,9 +22,7 @@ def compareImages(imgPost, img, x, y, w, h):
     postCrop = imgPost[y:h,x:w]
     err = np.sum((preCrop.astype("float") - postCrop.astype("float")) ** 2)
     err /= float(preCrop.shape[0] * preCrop.shape[1])
-    if err < 0.2:
-        return False
-    return True
+    return err
 
 def FindAndClick(d, img):
     n_boxes = len(d['level'])
@@ -34,25 +32,33 @@ def FindAndClick(d, img):
             matches = [c for c in key_words_accept if c.lower() == d['text'][i].lower()]
             if  matches:
                 (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
-                #pyautogui.click(x+w/2, y+h/2)
+                pyautogui.click(x+w/2, y+h/2)
 
                 time.sleep(2)
                 myScreenshot = pyautogui.screenshot()
                 ImagePath = screenshotsPath + '1.png'
                 myScreenshot.save(ImagePath)
                 imgPost = cv2.imread(ImagePath)
-                if compareImages(imgPost, img, x, y, x+w, y+h):
+                if compareImages(imgPost, img, x, y, x+w, y+h) > 0.5:
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 4)
                     return True
                 
 if __name__ == "__main__":
     pytesseract.pytesseract.tesseract_cmd = tesseractPath
-
+    
+    ## In firefox options -> privacy and security, check the option "Eliminar cookies y datos del sitio cuando cierre Firefox" 
+    ## in order to show the consent form each time you access a website
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefoxPath))
+
+    ## A file with one webpage per line.
     file = open(sitesList, 'r')
     Lines = file.readlines()
-    count = 1
+    iterator = 1
     for line in Lines:
-        webbrowser.get('firefox').open(line, new=0)
+        ## new = 0 -> open in same tab
+        ## new = 1 -> open in new window
+        ## new = 2 -> open in new tab
+        webbrowser.get('firefox').open(line, new=1)
         time.sleep(2)
         myScreenshot = pyautogui.screenshot()
         ImagePath = screenshotsPath + '0.png'
@@ -61,22 +67,31 @@ if __name__ == "__main__":
 
         d = pytesseract.image_to_data(img, lang='spa+eng', output_type=Output.DICT)
         found = FindAndClick(d, img)
+
         if not found:
+        ## Try with black and white image and if not a binarized one
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            d2 = pytesseract.image_to_data(gray, lang='spa+eng', output_type=Output.DICT)
-            found = FindAndClick(d2,img)
+            d = pytesseract.image_to_data(gray, lang='spa+eng', output_type=Output.DICT)
+            found = FindAndClick(d,img)
             if not found:
                 (thresh, im_bw) = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-                d2 = pytesseract.image_to_data(im_bw, lang='spa+eng', output_type=Output.DICT)
-                found = FindAndClick(d2,img)
+                d = pytesseract.image_to_data(im_bw, lang='spa+eng', output_type=Output.DICT)
+                found = FindAndClick(d,img)
                 if not found:
-                    d2 = pytesseract.image_to_data(cv2.bitwise_not(im_bw), lang='spa+eng', output_type=Output.DICT)
-                    found = FindAndClick(d2,img)
+                    d = pytesseract.image_to_data(cv2.bitwise_not(im_bw), lang='spa+eng', output_type=Output.DICT)
+                    found = FindAndClick(d,img)
+
         if not found:
+        ## Try with other channels like hsv
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             hue,sat,val = cv2.split(hsv)
-            d2 = pytesseract.image_to_data(hue, lang='spa+eng', output_type=Output.DICT)
-            found = FindAndClick(d2,img)
+            d = pytesseract.image_to_data(hue, lang='spa+eng', output_type=Output.DICT)
+            found = FindAndClick(d,img)
             if not found:
-                d2 = pytesseract.image_to_data(val, lang='spa+eng', output_type=Output.DICT)
-                found = FindAndClick(d2,img)
+                d = pytesseract.image_to_data(val, lang='spa+eng', output_type=Output.DICT)
+                found = FindAndClick(d,img)
+        if found: 
+            cv2.imwrite('./Prova-2/{0}-Found.png'.iterator, img)
+        else:
+            cv2.imwrite('./Prova-2/{0}-Error.png'.iterator, img)
+        iterator++
