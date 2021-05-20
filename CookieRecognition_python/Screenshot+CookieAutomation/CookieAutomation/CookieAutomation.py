@@ -12,6 +12,10 @@ from pytesseract import Output
 key_words_accept = ['Acepto', 'ok','Accept',  'Aceptar','consent', 'Got', 'Agree', 'cerrar', 'close', 'Entendido']
 key_words_deny = ['Deny','customize', 'deny', 'Read more', 'Reject', 'Cookie Policy', 'More information', 'Denegar', 'Gestionar', 'gestionar', 'Administrar', 'cookie', 'policy', 'here', 'uso', 'información', 'informacion']
 workingDirectory = r'C:\Dev\TFG\Screenshots'
+sitesList = r'C:\Dev\TFG\Sites.txt'
+tesseractPath = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+firefoxPath = "C://Program Files//Mozilla Firefox//firefox.exe"
+screenshotsPath = r'../Screenshots/'
 
 def compareImages(imgPost, img, x, y, w, h):
     preCrop = img[y:h, x:w]
@@ -34,24 +38,24 @@ def FindAndClick(d, img):
 
                 time.sleep(2)
                 myScreenshot = pyautogui.screenshot()
-                ImagePath = r'C:\Dev\TFG\Screenshots\1.png'
+                ImagePath = screenshotsPath + '1.png'
                 myScreenshot.save(ImagePath)
                 imgPost = cv2.imread(ImagePath)
                 if compareImages(imgPost, img, x, y, x+w, y+h):
                     return True
                 
 if __name__ == "__main__":
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = tesseractPath
 
-    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser("C://Program Files//Mozilla Firefox//firefox.exe"))
-    file = open(r'C:\Dev\TFG\Amazon.txt', 'r')
+    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefoxPath))
+    file = open(sitesList, 'r')
     Lines = file.readlines()
     count = 1
     for line in Lines:
         webbrowser.get('firefox').open(line, new=0)
         time.sleep(2)
         myScreenshot = pyautogui.screenshot()
-        ImagePath = r'C:\Dev\TFG\Screenshots\0.png'
+        ImagePath = screenshotsPath + '0.png'
         myScreenshot.save(ImagePath)
         img = cv2.imread(ImagePath)
 
@@ -76,4 +80,3 @@ if __name__ == "__main__":
             if not found:
                 d2 = pytesseract.image_to_data(val, lang='spa+eng', output_type=Output.DICT)
                 found = FindAndClick(d2,img)
-        cv2.imwrite('./Prova-2/Sample.png', img)
