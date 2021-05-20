@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ScreenshotAutomation", "ScreenshotAutomation\ScreenshotAutomation.pyproj", "{AED58CBF-DE27-4BEF-8373-1B1B2A228072}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AED58CBF-DE27-4BEF-8373-1B1B2A228072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AED58CBF-DE27-4BEF-8373-1B1B2A228072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21F118AC-89DF-43D2-8767-2731072CE438}
+	EndGlobalSection
+EndGlobal
