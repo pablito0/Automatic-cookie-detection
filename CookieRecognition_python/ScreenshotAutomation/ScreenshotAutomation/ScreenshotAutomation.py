@@ -4,7 +4,7 @@ import pyautogui
 import time
 
 webbrowser.register('firefox', None, webbrowser.BackgroundBrowser("C://Program Files//Mozilla Firefox//firefox.exe"))
-file = open(r'C:\Dev\TFG\100PagesSpain.txt', 'r')
+file = open(r'C:\Dev\TFG\Github\Automatic-cookie-detection\1MillionPages.txt', 'r')
 Lines = file.readlines()
 count = 100
 for line in Lines:
